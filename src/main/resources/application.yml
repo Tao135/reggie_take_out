@@ -2,17 +2,17 @@ server:
   port: 80
 spring:
   application:
-    #Æô¶¯Ê±£¬Ó¦ÓÃµÄÃû³Æ
+    #å¯åŠ¨æ—¶ï¼Œåº”ç”¨çš„åç§°
     name: reggit_take_out
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/reggie?serverTimezone=Asia/Shanghai$useUnicode=true
+      url: jdbc:mysql://localhost:3306/reggie?serverTimezone=UTC
       username: root
       password: 123456
 mybatis-plus:
   configuration:
-    #ÔÚÓ³ÉäÊµÌå»òÕßÊôĞÔÊ±£¬½«Êı¾İ¿âÖĞ±íÃûºÍ×Ö¶ÎÃûÖĞµÄÏÂ»®ÏßÈ¥µô£¬°´ÕÕÍÕ·åÃüÃû·¨Ó³Éä
+    #åœ¨æ˜ å°„å®ä½“æˆ–è€…å±æ€§æ—¶ï¼Œå°†æ•°æ®åº“ä¸­è¡¨åå’Œå­—æ®µåä¸­çš„ä¸‹åˆ’çº¿å»æ‰ï¼ŒæŒ‰ç…§é©¼å³°å‘½åæ³•æ˜ å°„
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
