@@ -21,6 +21,12 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
+    /**
+     * 员工登录
+     * @param request
+     * @param employee
+     * @return
+     */
     @PostMapping("/login")
     public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee){
         //1.将页面提交的密码password进行md5加密处理
@@ -50,5 +56,17 @@ public class EmployeeController {
         //6.登录成功，将员工id存入Session并返回登录成功结果
         request.getSession().setAttribute("employee",emp.getId());
         return R.success(emp);
+    }
+
+    /**
+     * 员工退出
+     * @param request
+     * @return
+     */
+    @PostMapping("/logout")
+    public R<String> logout(HttpServletRequest request){
+        //清理Session中保存的员工id
+        request.getSession().removeAttribute("employee");
+        return R.success("退出成功");
     }
 }
