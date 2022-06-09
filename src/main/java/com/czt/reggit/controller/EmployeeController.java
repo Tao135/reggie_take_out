@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -69,4 +70,40 @@ public class EmployeeController {
         request.getSession().removeAttribute("employee");
         return R.success("退出成功");
     }
+
+    /**
+     * 新增员工
+     * @param employee
+     * @return
+     */
+    @PostMapping
+    public R<String> save(HttpServletRequest request,@RequestBody Employee employee){
+        log.info("新增员工，员工信息为：{}",employee.toString());
+
+        //根据用户名查询数据库中是否存在此数据
+        LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Employee::getUsername,employee.getUsername());
+        Employee emp = employeeService.getOne(lqw);     //因为字段已经设置唯一，所以只需查询单个即可
+
+        //判断如果存在数据，此返回错误信息
+        if (emp != null){
+            return R.error("此用户名已存在");
+        }
+
+        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+
+        employee.setCreateTime(LocalDateTime.now());        //设置当前时间进行赋值
+        employee.setUpdateTime(LocalDateTime.now());
+
+        //获得当前登录用户的id
+        Long empId = (Long) request.getSession().getAttribute("employee");
+
+        employee.setCreateUser(empId);
+        employee.setUpdateUser(empId);
+
+        employeeService.save(employee);
+        return R.success("新增员工成功");
+    }
+
+
 }
