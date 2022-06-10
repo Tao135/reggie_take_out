@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.czt.reggit.common.R;
 import com.czt.reggit.pojo.Employee;
 import com.czt.reggit.service.EmployeeService;
-import com.sun.xml.internal.ws.util.StreamUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,5 +129,20 @@ public class EmployeeController {
         employeeService.page(pageInfo,lqw);         //无需传数据，因为mp会自动封装传值
 
         return R.success(pageInfo);
+    }
+
+
+    /**
+     * 根据id修改员工信息
+     * @param employee
+     * @return
+     */
+    @PutMapping
+    public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
+        Long employeeId = (Long) request.getSession().getAttribute("employee");
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(employeeId);
+        employeeService.updateById(employee);
+        return R.success("信息修改成功");
     }
 }
