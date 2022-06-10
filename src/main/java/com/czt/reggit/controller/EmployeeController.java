@@ -1,16 +1,16 @@
 package com.czt.reggit.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.czt.reggit.common.R;
 import com.czt.reggit.pojo.Employee;
 import com.czt.reggit.service.EmployeeService;
+import com.sun.xml.internal.ws.util.StreamUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -105,5 +105,30 @@ public class EmployeeController {
         return R.success("新增员工成功");
     }
 
+    /**
+     * 员工信息分页查询
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @GetMapping("/page")
+    public R<Page> page(int page,int pageSize,String name){
+        log.info("page = {},pageSize = {},name = {}" , page,pageSize,name);
 
+        //构造分页构造器
+        Page pageInfo = new Page(page,pageSize);
+
+        //构造条件构造器
+        LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
+        //添加过滤条件
+        lqw.like(StringUtils.isNotEmpty(name),Employee::getName,name);       //当name不等于空时，执行后面的操作
+        //添加排序条件
+        lqw.orderByDesc(Employee::getUpdateTime);
+
+        //执行查询
+        employeeService.page(pageInfo,lqw);         //无需传数据，因为mp会自动封装传值
+
+        return R.success(pageInfo);
+    }
 }
