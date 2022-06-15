@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 分类管理
  */
@@ -76,5 +78,20 @@ public class CategoryController {
         categoryService.updateById(category);
 
         return R.success("修改分类成功");
+    }
+
+
+    @GetMapping("/list")
+    public R<List<Category>> list(Category category){
+        //条件构造器
+        LambdaQueryWrapper<Category> catelqw = new LambdaQueryWrapper<>();
+        //添加条件
+        catelqw.eq(category.getType() != null,Category::getType,category.getType());    //当传过来的category的type值不为空时，进行实体类的type与传来的type进行比对条件判定。
+        //添加排序条件
+        catelqw.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);             //首先以sort为第一条件进行排序，然后再以updateTime为第二条件进行排序
+
+        List<Category> list = categoryService.list(catelqw);
+        return R.success(list);
+
     }
 }
