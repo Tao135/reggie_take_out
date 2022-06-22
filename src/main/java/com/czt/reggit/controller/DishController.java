@@ -109,7 +109,30 @@ public class DishController {
     public R<String> update(@RequestBody DishDto dishDto){
         log.info(dishDto.toString());
 
-        dishService.saveWithFlavor(dishDto);
+        dishService.updateWithFlavor(dishDto);
         return R.success("新增成功");
+    }
+
+
+    /**
+     * 根据条件查询对应的菜品信息
+     * @param dish
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Dish>> list(Dish dish){
+
+        //构造查询条件
+        LambdaQueryWrapper<Dish> dishlqw = new LambdaQueryWrapper<>();
+        dishlqw.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
+        //添加条件，查询状态为1（可以出售）的菜品
+        dishlqw.eq(Dish::getStatus,1);
+
+        //排序条件
+        dishlqw.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+
+        List<Dish> list = dishService.list(dishlqw);
+
+        return R.success(list);
     }
 }

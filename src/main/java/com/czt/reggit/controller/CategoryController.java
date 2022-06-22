@@ -80,7 +80,11 @@ public class CategoryController {
         return R.success("修改分类成功");
     }
 
-
+    /**
+     * 根据条件查询分类数据
+     * @param category
+     * @return
+     */
     @GetMapping("/list")
     public R<List<Category>> list(Category category){
         //条件构造器
