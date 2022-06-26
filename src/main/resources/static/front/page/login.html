@@ -35,7 +35,7 @@
         <!-- 引入组件库 -->
         <script src="../../backend/plugins/element-ui/index.js"></script>
         <!-- 引入vant样式 -->
-        <script src="./../js/vant.min.js"></script>  
+        <script src="./../js/vant.min.js"></script>
         <!-- 引入axios -->
         <script src="../../backend/plugins/axios/axios.min.js"></script>
         <script src="./../js/request.js"></script>
@@ -64,9 +64,9 @@
                     if (regex.test(this.form.phone)) {
                         this.msgFlag = false
                         //this.form.code = (Math.random()*1000000).toFixed(0)
-                        sendMsgApi({phone:this.form.phone})
-                        // const res = sendMsgApi({phone:this.form.phone})
-                        // sessionStorage.setItem("code",res)
+                        // sendMsgApi({phone:this.form.phone})
+                        const res = sendMsgApi({phone:this.form.phone})
+                        sessionStorage.setItem("code",res)
                     }else{
                         this.msgFlag = true
                     }
@@ -88,8 +88,17 @@
                     }else{
                         this.$notify({ type:'warning', message:'请输入手机号码'});
                     }
-                }
+                },
             }
         })
+
+        function sendMsgApi(data) {
+            return $axios({
+                'url': '/user/sendMsg',
+                'method': 'post',
+                data
+            })
+        }
+
     </script>
 </html>
