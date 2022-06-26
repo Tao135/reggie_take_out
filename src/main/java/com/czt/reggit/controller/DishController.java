@@ -6,6 +6,7 @@ import com.czt.reggit.common.R;
 import com.czt.reggit.dto.DishDto;
 import com.czt.reggit.pojo.Category;
 import com.czt.reggit.pojo.Dish;
+import com.czt.reggit.pojo.DishFlavor;
 import com.czt.reggit.service.CategoryService;
 import com.czt.reggit.service.DishFlavorService;
 import com.czt.reggit.service.DishService;
@@ -119,8 +120,25 @@ public class DishController {
      * @param dish
      * @return
      */
+//    @GetMapping("/list")
+//    public R<List<Dish>> list(Dish dish){
+//
+//        //构造查询条件
+//        LambdaQueryWrapper<Dish> dishlqw = new LambdaQueryWrapper<>();
+//        dishlqw.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
+//        //添加条件，查询状态为1（可以出售）的菜品
+//        dishlqw.eq(Dish::getStatus,1);
+//
+//        //排序条件
+//        dishlqw.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+//
+//        List<Dish> list = dishService.list(dishlqw);
+//
+//        return R.success(list);
+//    }
+
     @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish){
+    public R<List<DishDto>> list(Dish dish){
 
         //构造查询条件
         LambdaQueryWrapper<Dish> dishlqw = new LambdaQueryWrapper<>();
@@ -133,6 +151,32 @@ public class DishController {
 
         List<Dish> list = dishService.list(dishlqw);
 
-        return R.success(list);
+        List<DishDto> dishDtoList = list.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+
+            BeanUtils.copyProperties(item,dishDto);     //将item的值拷贝到dishDto
+
+            Long categoryId = item.getCategoryId();//分类id
+            //根据id查询分类对象
+            Category category = categoryService.getById(categoryId);
+
+            if (category != null){
+                String categoryName = category.getName();
+                dishDto.setCategoryName(categoryName);
+            }
+
+            //当前菜品id
+            Long dishId = item.getId();
+            LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
+            lqw.eq(DishFlavor::getDishId,dishId);
+            List<DishFlavor> flavorList = dishFlavorService.list(lqw);
+            dishDto.setFlavors(flavorList);
+
+            return dishDto;
+        }).collect(Collectors.toList());
+
+
+
+        return R.success(dishDtoList);
     }
 }
