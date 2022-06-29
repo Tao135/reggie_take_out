@@ -15,4 +15,7 @@ public interface SetmealService extends IService<Setmeal> {
 
     //更改销售状态
     public void updateByStatus(List<Long> ids,int state);
+
+    //修改套餐
+    public SetmealDto getDate(Long id);
 }

@@ -6,6 +6,7 @@ import com.czt.reggit.common.R;
 import com.czt.reggit.dto.SetmealDto;
 import com.czt.reggit.pojo.Category;
 import com.czt.reggit.pojo.Setmeal;
+import com.czt.reggit.pojo.SetmealDish;
 import com.czt.reggit.service.CategoryService;
 import com.czt.reggit.service.SetmealDishService;
 import com.czt.reggit.service.SetmealService;
@@ -137,5 +138,50 @@ public class SetmealController {
         return R.success(setmealList);
 
 
+    }
+
+    /**
+     * 回显套餐数据：根据套餐id查询套餐
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<SetmealDto> getData(@PathVariable Long id){
+        SetmealDto setmealDto = setmealService.getDate(id);
+
+        return R.success(setmealDto);
+    }
+
+
+    /**
+     * 修改套餐信息
+     * @param setmealDto
+     * @return
+     */
+    @PutMapping
+    public R<String> edit(@RequestBody SetmealDto setmealDto){
+
+        if (setmealDto==null){
+            return R.error("请求异常");
+        }
+
+        if (setmealDto.getSetmealDishes()==null){
+            return R.error("套餐没有菜品,请添加套餐");
+        }
+        List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
+        Long setmealId = setmealDto.getId();
+
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SetmealDish::getSetmealId,setmealId);
+        setmealDishService.remove(queryWrapper);
+
+        //为setmeal_dish表填充相关的属性
+        for (SetmealDish setmealDish : setmealDishes) {
+            setmealDish.setSetmealId(setmealId);
+        }
+        //批量把setmealDish保存到setmeal_dish表
+        setmealDishService.saveBatch(setmealDishes);
+        setmealService.updateById(setmealDto);
+
+        return R.success("套餐修改成功");
     }
 }
