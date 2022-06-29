@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
-        <title>菩提阁</title>
+        <title>油条豆腐脑</title>
         <link rel="icon" href="./../images/favico.ico">
         <!--不同屏幕尺寸根字体设置-->
         <script src="./../js/base.js"></script>
@@ -28,6 +28,7 @@
                 <span @click='getCode'>获取验证码</span>
             </div>
             <div class="divMsg" v-if="msgFlag">手机号输入不正确，请重新输入</div>
+
             <el-button type="primary" :class="{btnSubmit:1===1,btnNoPhone:!form.phone,btnPhone:form.phone}" @click="btnLogin">登录</el-button>
         </div>
         <!-- 开发环境版本，包含了有帮助的命令行警告 -->
@@ -64,7 +65,9 @@
                     if (regex.test(this.form.phone)) {
                         this.msgFlag = false
                         //this.form.code = (Math.random()*1000000).toFixed(0)
-                        sendMsgApi({phone:this.form.phone})
+                        const res = sendMsgApi({phone:this.form.phone})
+                        alert("发送验证码成功！请在手机上查看")
+                        sessionStorage.setItem("code",res)
                     }else{
                         this.msgFlag = true
                     }
@@ -72,13 +75,14 @@
                 async btnLogin(){
                     if(this.form.phone && this.form.code){
                         this.loading = true
-                        const res = await loginApi(this.form)
+                        //const res = await loginApi(this.form)
+                        const res = await loginApi({phone:this.form.phone,code:this.form.code})
                         this.loading = false
                         if(res.code === 1){
                             sessionStorage.setItem("userPhone",this.form.phone)
                             window.requestAnimationFrame(()=>{
                                 window.location.href= '/front/index.html'
-                            })                           
+                            })
                         }else{
                             this.$notify({ type:'warning', message:res.msg});
                         }

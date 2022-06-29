@@ -137,6 +137,11 @@ public class DishController {
 //        return R.success(list);
 //    }
 
+    /**
+     * 根据条件查询对应的菜品信息
+     * @param dish
+     * @return
+     */
     @GetMapping("/list")
     public R<List<DishDto>> list(Dish dish){
 
@@ -178,5 +183,36 @@ public class DishController {
 
 
         return R.success(dishDtoList);
+    }
+
+
+    /**
+     * 对菜品批量或者是单个 进行停售或者是起售
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public R<String> status(@PathVariable("status")int status,@RequestParam List<Long> ids){
+        log.info("批量修改的id和状态:{}",status,ids);
+
+        dishService.status(status,ids);
+
+        return R.success("售卖状态修改成功");
+    }
+
+
+
+    /**
+     * 套餐批量删除和单个删除
+     * @return
+     */
+    @DeleteMapping
+    public R<String> delete(@RequestParam("ids") List<Long> ids){
+        //删除菜品  这里的删除是逻辑删除
+        dishService.deleteByIds(ids);
+        //删除菜品对应的口味  也是逻辑删除
+        LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
+        lqw.in(DishFlavor::getDishId,ids);
+        dishFlavorService.remove(lqw);
+        return R.success("菜品删除成功");
     }
 }

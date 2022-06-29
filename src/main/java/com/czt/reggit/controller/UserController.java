@@ -8,11 +8,13 @@ import com.czt.reggit.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -91,4 +93,14 @@ public class UserController {
         return R.error("登录失败");
     }
 
+
+    /**
+     * 用户退出登录
+     */
+    @PostMapping("/loginout")
+    public R<String> loginout(HttpServletRequest request){
+        //清理Session中保存的员工id
+        request.getSession().removeAttribute("user");
+        return R.success("退出成功");
+    }
 }
