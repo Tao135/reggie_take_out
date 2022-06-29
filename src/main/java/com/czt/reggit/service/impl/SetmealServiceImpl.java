@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.czt.reggit.common.CustomException;
 import com.czt.reggit.dao.SetmealMapper;
 import com.czt.reggit.dto.SetmealDto;
+import com.czt.reggit.pojo.Dish;
 import com.czt.reggit.pojo.Setmeal;
 import com.czt.reggit.pojo.SetmealDish;
+import com.czt.reggit.service.DishService;
 import com.czt.reggit.service.SetmealDishService;
 import com.czt.reggit.service.SetmealService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,21 +74,25 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
     }
 
     /**
-     * 修改套装状态,1起售，0禁止
+     * 批量修改套装状态,1起售，0禁止
      * @param ids
      * @param state
      */
     @Override
-    public void updateByStatus(Long ids, int state) {
+    public void updateByStatus(List<Long> ids, int state) {
         //添加条件构造器
         LambdaQueryWrapper<Setmeal> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Setmeal::getId,ids);
+        lqw.in(ids != null,Setmeal::getId,ids);
 
-        Setmeal setmeal = getOne(lqw);
+        //对数据进行批量操作
+        List<Setmeal> list = this.list(lqw);
 
-        setmeal.setStatus(state);
-
-        this.update(setmeal,lqw);
+        for (Setmeal setmeal: list) {
+            if(setmeal != null){
+                setmeal.setStatus(state);
+                this.updateById(setmeal);
+            }
+        }
 
     }
 }

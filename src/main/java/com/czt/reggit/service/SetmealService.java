@@ -14,5 +14,5 @@ public interface SetmealService extends IService<Setmeal> {
     public void removeWithDish(List<Long> ids);
 
     //更改销售状态
-    public void updateByStatus(Long ids,int state);
+    public void updateByStatus(List<Long> ids,int state);
 }

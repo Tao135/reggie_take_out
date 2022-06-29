@@ -110,13 +110,13 @@ public class SetmealController {
      * @return
      */
     @PostMapping("/status/{state}")
-    public R<String> update(@PathVariable("state") int state,@RequestParam Long ids){
+    public R<String> update(@PathVariable("state") int state,@RequestParam List<Long> ids){
         log.info("state:{}",state + "-----id:{}",ids);
 
         //准备将套餐状态修改，1
         setmealService.updateByStatus(ids,state);
 
-        return R.success("修改销售状态");
+        return R.success("修改销售状态成功");
     }
 
 
