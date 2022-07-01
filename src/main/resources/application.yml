@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 8035
 spring:
   application:
     #启动时，应用的名称
@@ -24,4 +24,4 @@ mybatis-plus:
       id-type: ASSIGN_ID
 
 reggie:
-  path: E:\img\
+  path: /www/wwwroot/tao/reggie/img

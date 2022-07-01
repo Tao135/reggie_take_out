@@ -38,7 +38,8 @@ public class LoginCheckFilter implements Filter {
                 "/front/**",
                 "/common/**",
                 "/user/sendMsg",
-                "/user/login"
+                "/user/login",
+                "/www/wwwroot/tao/reggie/img"       //服务器照片地址
         };
 
 
